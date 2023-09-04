@@ -1,15 +1,33 @@
-const loadAiTools = () => {
+const loadAiTools = (isSortbyDateClicked) => {
   fetch("https://openapi.programming-hero.com/api/ai/tools")
     .then((res) => res.json())
-    .then((data) => displayAiTools(data));
+    .then((data) => displayAiTools(data, isSortbyDateClicked));
 };
-const displayAiTools = (data) => {
+const displayAiTools = (data, isSortbyDateClicked) => {
   // console.log(data);
   const tools = data.data.tools;
-  // console.log(tools);
+  console.log(tools);
 
   // get all ai tools container element
   const allAiToolsContainer = document.getElementById("all-ai-tool-container");
+
+  allAiToolsContainer.innerHTML = '';
+
+  // let's make the sort by date button workable 
+  const compare = (a,b) =>{
+    const date1 = new Date(a?.published_in).getTime()
+    const date2 = new Date(b?.published_in).getTime()
+    if(new Date(a?.published_in).getTime() < new Date(b?.published_in).getTime()){
+      return -1;
+    }else if(new Date(a?.published_in).getTime() > new Date(b?.published_in).getTime()){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+  if(isSortbyDateClicked){
+    tools.sort(compare);
+  }
 
   tools.forEach((tool) => {
     // console.log(tool);
@@ -112,5 +130,10 @@ const handleDetailedView = async (aiToolId) => {
 
   singleToolModalId.showModal();
 };
+
+// handle sort by date 
+const handleSortByDate = () =>{
+  loadAiTools(true)
+}
 
 loadAiTools();
